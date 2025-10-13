@@ -1,5 +1,5 @@
 import { Applicant, ApplicantCreate, ApplicantUpdate } from "@/types/applicant";
-import { supabase } from "@/lib/supabase";
+import { supabase } from "../src/lib/supabase";
 
 export const applicantService = {
   async createApplicant(applicant: ApplicantCreate): Promise<Applicant> {
