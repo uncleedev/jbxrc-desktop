@@ -7,7 +7,7 @@ export default function LayoutAdmin() {
     <main className="h-screen bg-background min-w-screen flex gap-4 p-4">
       <Sidebar />
 
-      <Card className="w-full p-4">
+      <Card className="w-full overflow-y-auto p-4">
         <Outlet />
       </Card>
     </main>

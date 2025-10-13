@@ -76,7 +76,7 @@ export default function AddApplicant() {
             </DialogDescription>
           </DialogHeader>
 
-          <div className="space-y-3">
+          <div className="space-y-2">
             <Label>Full Name</Label>
             <Input
               placeholder="Enter applicant’s name"

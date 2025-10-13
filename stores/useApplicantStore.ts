@@ -21,6 +21,7 @@ type ApplicantState = {
   promoteApplicant: (id: string, note?: string) => Promise<void>;
   demoteApplicant: (id: string, note?: string) => Promise<void>;
   cancelApplicant: (id: string, note?: string) => Promise<void>;
+  deployApplicant: (id: string, note?: string) => Promise<void>;
 
   subscribe: () => void;
   unsubscribe: () => void;
@@ -120,6 +121,18 @@ export const useApplicantStore = create<ApplicantState>((set, get) => ({
     } catch (err: any) {
       set({ error: err.message });
       toast.error(`Failed to cancel applicant: ${err.message}`);
+      throw err;
+    }
+  },
+
+  deployApplicant: async (id: string, note?: string) => {
+    try {
+      const { updateApplicant } = get();
+      await updateApplicant({ id, status: "deployed", note });
+      toast.success("Applicant has been deployed");
+    } catch (err: any) {
+      set({ error: err.message });
+      toast.error(`Failed to deploy applicant: ${err.message}`);
       throw err;
     }
   },

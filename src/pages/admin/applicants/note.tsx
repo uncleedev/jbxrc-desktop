@@ -14,7 +14,7 @@ type NoteDialogProps = {
   open: boolean;
   onClose: () => void;
   onSave: (note: string) => void;
-  action: "promote" | "demote" | "cancel";
+  action: "promote" | "demote" | "cancel" | "deploy";
 };
 
 export default function NoteDialog({

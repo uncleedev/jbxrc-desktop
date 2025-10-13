@@ -4,7 +4,8 @@ export type ApplicantStatus =
   | "requirements"
   | "deployment"
   | "orientation"
-  | "cancelled";
+  | "cancelled"
+  | "deployed";
 
 export type EmploymentType = "part-time" | "full-time";
 

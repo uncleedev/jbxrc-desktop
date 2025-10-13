@@ -14,6 +14,8 @@ import {
   MoreHorizontal,
   SquarePen,
   Eye,
+  User,
+  BriefcaseBusiness,
 } from "lucide-react";
 import {
   DropdownMenu,
@@ -38,6 +40,7 @@ import {
   TableRow,
 } from "@/components/ui/table";
 import { Applicant } from "@/types/applicant";
+import DeleteApplicant from "./delete";
 
 export default function ApplicantPage() {
   const {
@@ -49,7 +52,7 @@ export default function ApplicantPage() {
     promoteApplicant,
     demoteApplicant,
     cancelApplicant,
-    deleteApplicant,
+    deployApplicant,
   } = useApplicantStore();
 
   const [typeFilter, setTypeFilter] = useState("all");
@@ -67,10 +70,15 @@ export default function ApplicantPage() {
   );
 
   const [editOpen, setEditOpen] = useState(false);
+  const [deleteDialogOpen, setDeleteDialogOpen] = useState(false);
 
-  const [actionType, setActionType] = useState<"promote" | "demote" | "cancel">(
-    "promote"
-  );
+  const [actionType, setActionType] = useState<
+    "promote" | "demote" | "cancel" | "deploy"
+  >("promote");
+
+  // Pagination
+  const [currentPage, setCurrentPage] = useState(1);
+  const itemsPerPage = 14;
 
   useEffect(() => {
     fetchApplicants();
@@ -89,19 +97,40 @@ export default function ApplicantPage() {
     });
   }, [applicants, typeFilter, statusFilter, searchTerm]);
 
+  // Paginated items
+  const paginated = useMemo(() => {
+    const start = (currentPage - 1) * itemsPerPage;
+    return filtered.slice(start, start + itemsPerPage);
+  }, [filtered, currentPage]);
+
+  const totalPages = Math.ceil(filtered.length / itemsPerPage);
+
   const handleNoteSave = (note: string) => {
     if (!currentApplicantId) return;
 
-    if (actionType === "promote") {
-      promoteApplicant(currentApplicantId, note);
-    } else if (actionType === "demote") {
-      demoteApplicant(currentApplicantId, note);
-    } else if (actionType === "cancel") {
-      cancelApplicant(currentApplicantId, note);
+    switch (actionType) {
+      case "promote":
+        promoteApplicant(currentApplicantId, note);
+        break;
+      case "demote":
+        demoteApplicant(currentApplicantId, note);
+        break;
+      case "cancel":
+        cancelApplicant(currentApplicantId, note);
+        break;
+      case "deploy":
+        deployApplicant(currentApplicantId, note);
+        break;
     }
 
     setCurrentApplicantId(null);
     setNoteDialogOpen(false);
+  };
+
+  const handleDeploy = (applicant: Applicant) => {
+    setCurrentApplicantId(applicant.id);
+    setActionType("deploy");
+    setNoteDialogOpen(true);
   };
 
   return (
@@ -110,6 +139,7 @@ export default function ApplicantPage() {
         <h2 className="text-xl font-semibold">Applicants Management</h2>
         <AddApplicant />
       </div>
+
       <div className="flex flex-col gap-4 items-end">
         <div className="w-1/2 flex gap-4 justify-end">
           <Searchbar value={searchTerm} onChange={setSearchTerm} />
@@ -140,6 +170,7 @@ export default function ApplicantPage() {
                 <SelectItem value="deployment">Deployment</SelectItem>
                 <SelectItem value="orientation">Orientation</SelectItem>
                 <SelectItem value="cancelled">Cancelled</SelectItem>
+                <SelectItem value="deployed">Deployed</SelectItem>
               </SelectGroup>
             </SelectContent>
           </Select>
@@ -165,26 +196,32 @@ export default function ApplicantPage() {
                     Loading applicants...
                   </TableCell>
                 </TableRow>
-              ) : filtered.length === 0 ? (
+              ) : paginated.length === 0 ? (
                 <TableRow>
                   <TableCell colSpan={6} className="text-center py-6">
                     No applicants found.
                   </TableCell>
                 </TableRow>
               ) : (
-                filtered.map((a) => (
+                paginated.map((a) => (
                   <TableRow key={a.id}>
-                    <TableCell className="font-medium">{a.fullname}</TableCell>
+                    <TableCell className="font-medium flex items-center gap-2">
+                      <User /> {a.fullname}
+                    </TableCell>
                     <TableCell>{a.type}</TableCell>
                     <TableCell
                       className={`capitalize ${
-                        a.status === "cancelled" ? "text-red-600" : ""
+                        a.status === "cancelled"
+                          ? "text-red-600"
+                          : a.status === "deployed"
+                          ? "text-green-600"
+                          : ""
                       }`}
                     >
                       {a.status}
                     </TableCell>
 
-                    {/* Combined Promote/Demote Column */}
+                    {/* Promote/Demote Column */}
                     <TableCell className="flex gap-2">
                       <Button
                         size="sm"
@@ -195,7 +232,9 @@ export default function ApplicantPage() {
                           setNoteDialogOpen(true);
                         }}
                         disabled={
-                          a.status === "orientation" || a.status === "cancelled"
+                          a.status === "orientation" ||
+                          a.status === "deployed" ||
+                          a.status === "cancelled"
                         }
                       >
                         <ArrowUp className="w-4 h-4 mr-1" /> Promote
@@ -210,7 +249,9 @@ export default function ApplicantPage() {
                           setNoteDialogOpen(true);
                         }}
                         disabled={
-                          a.status === "examination" || a.status === "cancelled"
+                          a.status === "examination" ||
+                          a.status === "deployed" ||
+                          a.status === "cancelled"
                         }
                       >
                         <ArrowDown className="w-4 h-4 mr-1" /> Demote
@@ -225,7 +266,7 @@ export default function ApplicantPage() {
                     <TableCell>
                       <DropdownMenu>
                         <DropdownMenuTrigger asChild>
-                          <Button size="sm" variant="outline">
+                          <Button size="sm" variant="ghost">
                             <MoreHorizontal className="w-4 h-4" />
                           </Button>
                         </DropdownMenuTrigger>
@@ -242,40 +283,69 @@ export default function ApplicantPage() {
                               <Eye className="w-4 h-4 mr-2" /> View
                             </Button>
                           </DropdownMenuItem>
-                          <DropdownMenuItem>
-                            <Button
-                              size="sm"
-                              variant="ghost"
-                              onClick={() => {
-                                setSelectedApplicant(a);
-                                setEditOpen(true);
-                              }}
-                            >
-                              <SquarePen className="mr-2 h-4 w-4" /> Edit
-                            </Button>
-                          </DropdownMenuItem>
-                          <DropdownMenuItem>
-                            <Button
-                              size={"sm"}
-                              variant={"ghost"}
-                              onClick={() => {
-                                setCurrentApplicantId(a.id);
-                                setActionType("cancel");
-                                setNoteDialogOpen(true);
-                              }}
-                              disabled={a.status === "cancelled"}
-                            >
-                              <X className="w-4 h-4 mr-2" /> Cancel
-                            </Button>
-                          </DropdownMenuItem>
+
+                          {/* Only show Edit/Cancel/Deploy if NOT deployed or cancelled */}
+                          {a.status !== "deployed" &&
+                            a.status !== "cancelled" && (
+                              <>
+                                <DropdownMenuItem>
+                                  <Button
+                                    size="sm"
+                                    variant="ghost"
+                                    onClick={() => {
+                                      setSelectedApplicant(a);
+                                      setEditOpen(true);
+                                    }}
+                                  >
+                                    <SquarePen className="mr-2 h-4 w-4" /> Edit
+                                  </Button>
+                                </DropdownMenuItem>
+
+                                <DropdownMenuItem>
+                                  <Button
+                                    size="sm"
+                                    variant="ghost"
+                                    onClick={() => {
+                                      setCurrentApplicantId(a.id);
+                                      setActionType("cancel");
+                                      setNoteDialogOpen(true);
+                                    }}
+                                    className="text-red-600"
+                                  >
+                                    <X className="w-4 h-4 mr-2 text-red-600" />{" "}
+                                    Cancel
+                                  </Button>
+                                </DropdownMenuItem>
+
+                                {/* Deploy for Orientation */}
+                                {a.status === "orientation" && (
+                                  <DropdownMenuItem>
+                                    <Button
+                                      size="sm"
+                                      variant="ghost"
+                                      onClick={() => handleDeploy(a)}
+                                      className="text-green-600"
+                                    >
+                                      <BriefcaseBusiness className="w-4 h-4 mr-2 text-green-600" />
+                                      Deploy
+                                    </Button>
+                                  </DropdownMenuItem>
+                                )}
+                              </>
+                            )}
 
                           <DropdownMenuItem>
                             <Button
-                              onClick={() => deleteApplicant(a.id)}
-                              variant={"ghost"}
-                              size={"sm"}
+                              onClick={() => {
+                                setCurrentApplicantId(a.id);
+                                setDeleteDialogOpen(true);
+                              }}
+                              variant="ghost"
+                              size="sm"
+                              className="text-red-800"
                             >
-                              <Trash2 className="w-4 h-4 mr-2" /> Delete
+                              <Trash2 className="w-4 h-4 mr-2 text-red-800" />{" "}
+                              Delete
                             </Button>
                           </DropdownMenuItem>
                         </DropdownMenuContent>
@@ -287,7 +357,31 @@ export default function ApplicantPage() {
             </TableBody>
           </Table>
         </div>
+
+        {/* Pagination Controls */}
+        {totalPages > 1 && (
+          <div className="flex justify-end gap-2 mt-2">
+            <Button
+              size="sm"
+              onClick={() => setCurrentPage((p) => Math.max(1, p - 1))}
+              disabled={currentPage === 1}
+            >
+              Previous
+            </Button>
+            <span className="flex items-center px-2">
+              Page {currentPage} of {totalPages}
+            </span>
+            <Button
+              size="sm"
+              onClick={() => setCurrentPage((p) => Math.min(totalPages, p + 1))}
+              disabled={currentPage === totalPages}
+            >
+              Next
+            </Button>
+          </div>
+        )}
       </div>
+
       {/* Note Dialog */}
       {currentApplicantId && (
         <NoteDialog
@@ -297,6 +391,7 @@ export default function ApplicantPage() {
           action={actionType}
         />
       )}
+
       {selectedApplicant && (
         <ViewApplicant
           applicant={selectedApplicant}
@@ -304,11 +399,20 @@ export default function ApplicantPage() {
           onClose={() => setViewOpen(false)}
         />
       )}
+
       {selectedApplicant && (
         <EditApplicant
           applicant={selectedApplicant}
           open={editOpen}
           onClose={() => setEditOpen(false)}
+        />
+      )}
+
+      {currentApplicantId && (
+        <DeleteApplicant
+          applicantId={currentApplicantId}
+          open={deleteDialogOpen}
+          onClose={() => setDeleteDialogOpen(false)}
         />
       )}
     </section>
