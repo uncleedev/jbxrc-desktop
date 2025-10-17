@@ -8,7 +8,7 @@ export default function LayoutAdmin() {
       <Sidebar />
 
       <Card className="w-full overflow-y-auto p-4 relative">
-        {/* Watermark */}
+        {/* Watermark
         <div className="pointer-events-none absolute inset-0 flex items-center justify-center">
           <span
             className="text-gray-300 text-6xl font-bold opacity-50 select-none rotate-[-45deg]"
@@ -16,7 +16,7 @@ export default function LayoutAdmin() {
           >
             UNCLEDEV
           </span>
-        </div>
+        </div> */}
 
         <Outlet />
       </Card>

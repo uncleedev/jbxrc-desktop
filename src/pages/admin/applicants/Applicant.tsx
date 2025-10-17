@@ -41,6 +41,7 @@ import {
 } from "@/components/ui/table";
 import { Applicant } from "@/types/applicant";
 import DeleteApplicant from "./delete";
+import AdminNote from "./adminNote";
 
 export default function ApplicantPage() {
   const {
@@ -137,7 +138,11 @@ export default function ApplicantPage() {
     <section className="flex flex-col gap-4">
       <div className="flex items-center justify-between">
         <h2 className="text-xl font-semibold">Applicants Management</h2>
-        <AddApplicant />
+
+        <div className="space-x-2">
+          <AdminNote />
+          <AddApplicant />
+        </div>
       </div>
 
       <div className="flex flex-col gap-4 items-end">

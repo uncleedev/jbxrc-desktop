@@ -23,7 +23,7 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
-import { Plus } from "lucide-react";
+import { UserRoundPlus } from "lucide-react";
 import { useApplicantStore } from "../../../../stores/useApplicantStore";
 
 const applicantSchema = z.object({
@@ -63,7 +63,7 @@ export default function AddApplicant() {
     <Dialog>
       <DialogTrigger asChild>
         <Button>
-          <Plus className="mr-2 h-4 w-4" /> Add Applicant
+          <UserRoundPlus className="mr-2 h-4 w-4" /> Add Applicant
         </Button>
       </DialogTrigger>
 

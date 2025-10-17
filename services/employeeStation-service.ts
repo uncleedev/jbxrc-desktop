@@ -39,6 +39,18 @@ export const employeeStationService = {
     return data as EmployeeStation[];
   },
 
+  async getStationHistory(stationId: string) {
+    const { data, error } = await supabase
+      .from("station_status_history")
+      .select("id, old_status, new_status, change_at, note")
+      .eq("station_id", stationId)
+      .order("change_at", { ascending: true });
+
+    if (error)
+      throw new Error(error.message || "Failed to fetch station history");
+    return data;
+  },
+
   // Update an existing employee station
   async updateStation(
     station: EmployeeStationUpdate
