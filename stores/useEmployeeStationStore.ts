@@ -60,7 +60,7 @@ export const useEmployeeStationStore = create<EmployeeStationState>(
       try {
         const newStation = await employeeStationService.addStation({
           ...data,
-          status: "initial", // Automatically set initial status
+          status: "no-status",
         });
         set((state) => ({ stations: [newStation, ...state.stations] }));
         toast.success("Station added successfully!");
@@ -109,6 +109,7 @@ export const useEmployeeStationStore = create<EmployeeStationState>(
         if (!station) return;
 
         const STATUS_ORDER: StationStatus[] = [
+          "no-status",
           "initial",
           "follow-up",
           "certify",

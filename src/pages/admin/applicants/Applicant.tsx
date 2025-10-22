@@ -77,7 +77,6 @@ export default function ApplicantPage() {
     "promote" | "demote" | "cancel" | "deploy"
   >("promote");
 
-  // Pagination
   const [currentPage, setCurrentPage] = useState(1);
   const itemsPerPage = 14;
 
@@ -91,14 +90,13 @@ export default function ApplicantPage() {
     return applicants.filter((a) => {
       const matchesType = typeFilter === "all" || a.type === typeFilter;
       const matchesStatus = statusFilter === "all" || a.status === statusFilter;
-      const matchesSearch = a.fullname
-        .toLowerCase()
-        .includes(searchTerm.toLowerCase());
+      const matchesSearch =
+        a.fullname.toLowerCase().includes(searchTerm.toLowerCase()) ||
+        a.email.toLowerCase().includes(searchTerm.toLowerCase());
       return matchesType && matchesStatus && matchesSearch;
     });
   }, [applicants, typeFilter, statusFilter, searchTerm]);
 
-  // Paginated items
   const paginated = useMemo(() => {
     const start = (currentPage - 1) * itemsPerPage;
     return filtered.slice(start, start + itemsPerPage);
@@ -120,7 +118,7 @@ export default function ApplicantPage() {
         cancelApplicant(currentApplicantId, note);
         break;
       case "deploy":
-        deployApplicant(currentApplicantId, note);
+        deployApplicant(currentApplicantId);
         break;
     }
 
@@ -128,6 +126,7 @@ export default function ApplicantPage() {
     setNoteDialogOpen(false);
   };
 
+  // ✅ FIXED: open dialog for deploy
   const handleDeploy = (applicant: Applicant) => {
     setCurrentApplicantId(applicant.id);
     setActionType("deploy");
@@ -156,7 +155,7 @@ export default function ApplicantPage() {
             <SelectContent>
               <SelectGroup>
                 <SelectItem value="all">All Type</SelectItem>
-                <SelectItem value="part-time">Part Time</SelectItem>
+                <SelectItem value="working-student">Working Student</SelectItem>
                 <SelectItem value="full-time">Full Time</SelectItem>
               </SelectGroup>
             </SelectContent>
@@ -169,6 +168,7 @@ export default function ApplicantPage() {
             <SelectContent>
               <SelectGroup>
                 <SelectItem value="all">All Status</SelectItem>
+                <SelectItem value="no-status">No Status</SelectItem>
                 <SelectItem value="examination">Examination</SelectItem>
                 <SelectItem value="interview">Interview</SelectItem>
                 <SelectItem value="requirements">Requirements</SelectItem>
@@ -186,6 +186,7 @@ export default function ApplicantPage() {
             <TableHeader>
               <TableRow>
                 <TableHead>Name</TableHead>
+                <TableHead>Email</TableHead>
                 <TableHead>Type</TableHead>
                 <TableHead>Status</TableHead>
                 <TableHead>Promote/Demote</TableHead>
@@ -197,13 +198,13 @@ export default function ApplicantPage() {
             <TableBody>
               {loading ? (
                 <TableRow>
-                  <TableCell colSpan={6} className="text-center py-6">
+                  <TableCell colSpan={7} className="text-center py-6">
                     Loading applicants...
                   </TableCell>
                 </TableRow>
               ) : paginated.length === 0 ? (
                 <TableRow>
-                  <TableCell colSpan={6} className="text-center py-6">
+                  <TableCell colSpan={7} className="text-center py-6">
                     No applicants found.
                   </TableCell>
                 </TableRow>
@@ -211,9 +212,14 @@ export default function ApplicantPage() {
                 paginated.map((a) => (
                   <TableRow key={a.id}>
                     <TableCell className="font-medium flex items-center gap-2">
-                      <User /> {a.fullname}
+                      <User className="size-5" /> <span>{a.fullname}</span>
                     </TableCell>
-                    <TableCell>{a.type}</TableCell>
+                    <TableCell>{a.email}</TableCell>
+                    <TableCell className="capitalize">
+                      {a.type === "working-student"
+                        ? "Working Student"
+                        : "Full Time"}
+                    </TableCell>
                     <TableCell
                       className={`capitalize ${
                         a.status === "cancelled"
@@ -223,10 +229,9 @@ export default function ApplicantPage() {
                           : ""
                       }`}
                     >
-                      {a.status}
+                      {a.status.replace("-", " ")}
                     </TableCell>
 
-                    {/* Promote/Demote Column */}
                     <TableCell className="flex gap-2">
                       <Button
                         size="sm"
@@ -267,7 +272,6 @@ export default function ApplicantPage() {
                       {new Date(a.created_at).toLocaleString()}
                     </TableCell>
 
-                    {/* Actions Dropdown */}
                     <TableCell>
                       <DropdownMenu>
                         <DropdownMenuTrigger asChild>
@@ -289,7 +293,6 @@ export default function ApplicantPage() {
                             </Button>
                           </DropdownMenuItem>
 
-                          {/* Only show Edit/Cancel/Deploy if NOT deployed or cancelled */}
                           {a.status !== "deployed" &&
                             a.status !== "cancelled" && (
                               <>
@@ -317,12 +320,11 @@ export default function ApplicantPage() {
                                     }}
                                     className="text-red-600"
                                   >
-                                    <X className="w-4 h-4 mr-2 text-red-600" />{" "}
+                                    <X className="w-4 h-4 mr-2 text-red-600" />
                                     Cancel
                                   </Button>
                                 </DropdownMenuItem>
 
-                                {/* Deploy for Orientation */}
                                 {a.status === "orientation" && (
                                   <DropdownMenuItem>
                                     <Button
@@ -349,7 +351,7 @@ export default function ApplicantPage() {
                               size="sm"
                               className="text-red-800"
                             >
-                              <Trash2 className="w-4 h-4 mr-2 text-red-800" />{" "}
+                              <Trash2 className="w-4 h-4 mr-2 text-red-800" />
                               Delete
                             </Button>
                           </DropdownMenuItem>
@@ -363,7 +365,6 @@ export default function ApplicantPage() {
           </Table>
         </div>
 
-        {/* Pagination Controls */}
         {totalPages > 1 && (
           <div className="flex justify-end gap-2 mt-2">
             <Button
@@ -387,7 +388,6 @@ export default function ApplicantPage() {
         )}
       </div>
 
-      {/* Note Dialog */}
       {currentApplicantId && (
         <NoteDialog
           open={noteDialogOpen}

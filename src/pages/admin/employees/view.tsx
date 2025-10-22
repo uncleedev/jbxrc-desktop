@@ -42,7 +42,9 @@ export default function ViewEmployeeStations({
   useEffect(() => {
     if (!open) return;
 
-    const empStations = stations.filter((s) => s.employee_id === employee.id);
+    const empStations = stations.filter(
+      (s) => s.employee_id === employee.id && s.status
+    );
     setEmployeeStations(empStations);
 
     const fetchHistories = async () => {
@@ -141,7 +143,7 @@ export default function ViewEmployeeStations({
                               {h.new_status}
                             </span>
                             <span className="text-xs text-muted-foreground">
-                              {new Date(h.change_at).toLocaleDateString()}
+                              {new Date(h.change_at).toLocaleString()}
                             </span>
                           </div>
                           {h.note && (

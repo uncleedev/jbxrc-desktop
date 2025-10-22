@@ -55,7 +55,11 @@ export default function EmployeePage() {
   const [viewStationsOpen, setViewStationsOpen] = useState(false);
 
   const STATION_OPTIONS: StationName[] = [
-    "kitchen",
+    "back-up",
+    "fryman",
+    "grill",
+    "stockman",
+    "pantry",
     "counter",
     "dining",
     "drive-thru",

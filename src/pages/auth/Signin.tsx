@@ -5,7 +5,8 @@ import { useAuthStore } from "../../../stores/useAuthStore";
 import { useNavigate } from "react-router-dom";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
-import { useEffect } from "react";
+import { useEffect, useState } from "react";
+import { Eye, EyeOff } from "lucide-react";
 import logo from "@/assets/logo.png";
 
 const signinSchema = z.object({
@@ -18,9 +19,13 @@ type SigninForm = z.infer<typeof signinSchema>;
 export default function SigninPage() {
   const { signin, session, loading, getSession } = useAuthStore();
   const navigate = useNavigate();
+  const [showPassword, setShowPassword] = useState(false);
 
   const { register, handleSubmit } = useForm<SigninForm>({
     resolver: zodResolver(signinSchema),
+    defaultValues: {
+      email: "partnercommunity01@gmail.com",
+    },
   });
 
   useEffect(() => {
@@ -51,12 +56,23 @@ export default function SigninPage() {
         <h2 className="text-2xl font-semibold text-center">
           File Status Monitoring System
         </h2>
-        <Input placeholder="Email" {...register("email")} />
-        <Input
-          type="password"
-          placeholder="Password"
-          {...register("password")}
-        />
+
+        {/* Password Input with Eye */}
+        <div className="relative">
+          <Input
+            type={showPassword ? "text" : "password"}
+            placeholder="Password"
+            {...register("password")}
+          />
+          <button
+            type="button"
+            onClick={() => setShowPassword((prev) => !prev)}
+            className="absolute right-3 top-1/2 -translate-y-1/2 text-gray-400 hover:text-gray-600"
+          >
+            {showPassword ? <EyeOff size={20} /> : <Eye size={20} />}
+          </button>
+        </div>
+
         <Button type="submit" disabled={loading}>
           {loading ? "Signing in..." : "Sign In"}
         </Button>

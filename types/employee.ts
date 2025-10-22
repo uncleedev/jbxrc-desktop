@@ -2,7 +2,11 @@ import { EmploymentType } from "./applicant";
 
 // Station names
 export type StationName =
-  | "kitchen"
+  | "pantry"
+  | "grill"
+  | "fryman"
+  | "back-up"
+  | "stockman"
   | "counter"
   | "dining"
   | "drive-thru"
@@ -10,7 +14,12 @@ export type StationName =
   | "um"
   | "sc";
 
-export type StationStatus = "initial" | "follow-up" | "certify" | "recertify";
+export type StationStatus =
+  | "no-status"
+  | "initial"
+  | "follow-up"
+  | "certify"
+  | "recertify";
 
 export type Employee = {
   id: string;

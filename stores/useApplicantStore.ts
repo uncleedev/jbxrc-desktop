@@ -7,6 +7,7 @@ import {
 } from "@/types/applicant";
 import { applicantService } from "../services/applicant-service";
 import { toast } from "sonner";
+import { supabase } from "@/lib/supabase";
 
 type ApplicantState = {
   applicants: Applicant[];
@@ -93,6 +94,7 @@ export const useApplicantStore = create<ApplicantState>((set, get) => ({
       if (!applicant) return;
 
       const STATUS_ORDER: ApplicantStatus[] = [
+        "no-status",
         "examination",
         "interview",
         "requirements",
@@ -127,8 +129,19 @@ export const useApplicantStore = create<ApplicantState>((set, get) => ({
 
   deployApplicant: async (id: string, note?: string) => {
     try {
-      const { updateApplicant } = get();
+      const { updateApplicant, applicants } = get();
+      const user = applicants.find((u) => u.id === id);
+      if (!user) throw new Error("Applicant not found.");
+
+      const password = user.fullname.replace(/\s+/g, "").toLowerCase();
+
       await updateApplicant({ id, status: "deployed", note });
+
+      await supabase.auth.signUp({
+        email: user.email,
+        password: password,
+      });
+
       toast.success("Applicant has been deployed");
     } catch (err: any) {
       set({ error: err.message });
@@ -144,6 +157,7 @@ export const useApplicantStore = create<ApplicantState>((set, get) => ({
       if (!applicant) return;
 
       const STATUS_ORDER: ApplicantStatus[] = [
+        "no-status",
         "examination",
         "interview",
         "requirements",

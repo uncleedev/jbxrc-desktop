@@ -26,7 +26,7 @@ import { toast } from "sonner";
 
 const applicantSchema = z.object({
   fullname: z.string().min(2, "Full name is required"),
-  type: z.enum(["part-time", "full-time"], {
+  type: z.enum(["working-student", "full-time"], {
     message: "Select employment type",
   }),
 });
@@ -37,7 +37,7 @@ type EditApplicantProps = {
   applicant: {
     id: string;
     fullname: string;
-    type: "part-time" | "full-time";
+    type: "working-student" | "full-time";
   };
   open: boolean;
   onClose: () => void;
@@ -85,6 +85,7 @@ export default function EditApplicant({
           </DialogHeader>
 
           <div className="space-y-3">
+            {/* Full name */}
             <Label>Full Name</Label>
             <Input
               placeholder="Enter applicant’s name"
@@ -94,10 +95,11 @@ export default function EditApplicant({
               <p className="text-sm text-red-500">{errors.fullname.message}</p>
             )}
 
+            {/* Employment type */}
             <Label>Employment Type</Label>
             <Select
               onValueChange={(v) =>
-                setValue("type", v as "part-time" | "full-time")
+                setValue("type", v as "working-student" | "full-time")
               }
               value={watch("type")}
             >
@@ -106,7 +108,9 @@ export default function EditApplicant({
               </SelectTrigger>
               <SelectContent>
                 <SelectGroup>
-                  <SelectItem value="part-time">Part Time</SelectItem>
+                  <SelectItem value="working-student">
+                    Working Student
+                  </SelectItem>
                   <SelectItem value="full-time">Full Time</SelectItem>
                 </SelectGroup>
               </SelectContent>
