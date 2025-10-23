@@ -115,15 +115,17 @@ export default function EditProductDialog({
           <div>
             <Label>Category</Label>
             <Select
-              value={watch("category")}
-              onValueChange={(v) => setValue("category", v)}
+              value={watch("category") || "none"}
+              onValueChange={(v) =>
+                setValue("category", v === "none" ? undefined : v)
+              }
             >
               <SelectTrigger>
                 <SelectValue placeholder="Select category" />
               </SelectTrigger>
               <SelectContent>
                 <SelectGroup>
-                  <SelectItem value="">None</SelectItem>
+                  <SelectItem value="none">None</SelectItem>
                   {categories.map((c) => (
                     <SelectItem key={c.id} value={c.id}>
                       {c.label}

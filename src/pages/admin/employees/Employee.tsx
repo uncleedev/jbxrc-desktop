@@ -190,6 +190,7 @@ export default function EmployeePage() {
             <TableHeader>
               <TableRow>
                 <TableHead>Name</TableHead>
+                <TableHead>Email</TableHead>
                 <TableHead>Type</TableHead>
                 <TableHead>Stations</TableHead>
                 <TableHead>Actions</TableHead>
@@ -217,6 +218,7 @@ export default function EmployeePage() {
                   return (
                     <TableRow key={emp.id}>
                       <TableCell>{emp.fullname}</TableCell>
+                      <TableCell>{emp.email}</TableCell>
                       <TableCell>{emp.type}</TableCell>
                       <TableCell>
                         {empStations.length > 0

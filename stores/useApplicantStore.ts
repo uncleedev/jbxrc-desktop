@@ -1,4 +1,5 @@
 import { create } from "zustand";
+import emailjs from "emailjs-com";
 import {
   Applicant,
   ApplicantCreate,
@@ -47,8 +48,8 @@ export const useApplicantStore = create<ApplicantState>((set, get) => ({
 
   addApplicant: async (data) => {
     try {
-      const applicant = await applicantService.createApplicant(data);
-      set((state) => ({ applicants: [applicant, ...state.applicants] }));
+      await applicantService.createApplicant(data);
+      get().fetchApplicants();
       toast.success("Applicant added successfully!");
     } catch (err: any) {
       set({ error: err.message });
@@ -59,12 +60,8 @@ export const useApplicantStore = create<ApplicantState>((set, get) => ({
 
   updateApplicant: async (data) => {
     try {
-      const updated = await applicantService.updateApplicant(data);
-      set((state) => ({
-        applicants: state.applicants.map((a) =>
-          a.id === updated.id ? updated : a
-        ),
-      }));
+      await applicantService.updateApplicant(data);
+      get().fetchApplicants();
       toast.success("Applicant updated successfully!");
     } catch (err: any) {
       set({ error: err.message });
@@ -133,19 +130,39 @@ export const useApplicantStore = create<ApplicantState>((set, get) => ({
       const user = applicants.find((u) => u.id === id);
       if (!user) throw new Error("Applicant not found.");
 
-      const password = user.fullname.replace(/\s+/g, "").toLowerCase();
+      // Generate a random password
+      const base = user.fullname.replace(/\s+/g, "").toLowerCase();
+      const random = Math.random().toString(36).slice(-4);
+      const password = `${base}${random}`;
+
+      // Create Supabase user account
+      const { error: supabaseError } = await supabase.auth.signUp({
+        email: user.email,
+        password,
+      });
+
+      if (supabaseError) throw new Error(supabaseError.message);
+
+      // Send deployment email via EmailJS
+      const templateParams = {
+        name: user.fullname,
+        email: user.email,
+        password,
+      };
+
+      await emailjs.send(
+        import.meta.env.VITE_EMAILJS_SERVICE_ID as string,
+        import.meta.env.VITE_EMAILJS_TEMPLATE_ID as string,
+        templateParams,
+        import.meta.env.VITE_EMAILJS_PUBLIC_KEY as string
+      );
 
       await updateApplicant({ id, status: "deployed", note });
 
-      await supabase.auth.signUp({
-        email: user.email,
-        password: password,
-      });
-
-      toast.success("Applicant has been deployed");
+      toast.success("Applicant has been deployed and email sent successfully!");
     } catch (err: any) {
       set({ error: err.message });
-      toast.error(`Failed to deploy applicant: ${err.message}`);
+      toast.error(`Deployment failed: ${err.message}`);
       throw err;
     }
   },

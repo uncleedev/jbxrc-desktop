@@ -24,6 +24,7 @@ export type StationStatus =
 export type Employee = {
   id: string;
   fullname: string;
+  email: string | null;
   type: EmploymentType;
   deployed_at: string;
   applicant_id: string;
