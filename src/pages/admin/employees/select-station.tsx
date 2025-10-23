@@ -45,7 +45,7 @@ export default function SelectStation({
                 checked={selectedStations.includes(st)}
                 onCheckedChange={() => toggleStation(st)}
               />
-              <span>{st}</span>
+              <span className="capitalize">{st}</span>
             </div>
           ))}
         </div>

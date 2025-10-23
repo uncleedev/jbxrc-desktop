@@ -1,4 +1,11 @@
-import { Home, Users, FileUser, LogOut, UserRoundCog } from "lucide-react";
+import {
+  Home,
+  Users,
+  FileUser,
+  LogOut,
+  UserRoundCog,
+  Hamburger,
+} from "lucide-react";
 import { NavLink, useNavigate } from "react-router-dom";
 import logo from "@/assets/logo.png";
 import { useAuthStore } from "../../../stores/useAuthStore";
@@ -12,6 +19,7 @@ export default function Sidebar() {
     { name: "Dashboard", icon: Home, path: "/dashboard" },
     { name: "Applicants", icon: FileUser, path: "/applicants" },
     { name: "Employees", icon: Users, path: "/employees" },
+    { name: "Products", icon: Hamburger, path: "/products" },
     { name: "Setting", icon: UserRoundCog, path: "/settings" },
   ];
 

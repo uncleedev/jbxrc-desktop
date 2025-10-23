@@ -28,7 +28,8 @@ import { useApplicantStore } from "../../../../stores/useApplicantStore";
 
 const applicantSchema = z.object({
   fullname: z.string().min(2, "Full name is required"),
-  type: z.enum(["part-time", "full-time"], {
+  email: z.string().email("Please enter a valid email address"),
+  type: z.enum(["working-student", "full-time"], {
     message: "Select employment type",
   }),
 });
@@ -47,14 +48,15 @@ export default function AddApplicant() {
     formState: { errors, isSubmitting },
   } = useForm<ApplicantFormData>({
     resolver: zodResolver(applicantSchema),
-    defaultValues: { fullname: "", type: "part-time" },
+    defaultValues: { fullname: "", email: "", type: "working-student" },
   });
 
   const onSubmit = async (data: ApplicantFormData) => {
     await addApplicant({
       fullname: data.fullname,
+      email: data.email,
       type: data.type,
-      status: "examination",
+      status: "no-status",
     });
     reset();
   };
@@ -77,6 +79,7 @@ export default function AddApplicant() {
           </DialogHeader>
 
           <div className="space-y-2">
+            {/* Full name */}
             <Label>Full Name</Label>
             <Input
               placeholder="Enter applicant’s name"
@@ -86,10 +89,22 @@ export default function AddApplicant() {
               <p className="text-sm text-red-500">{errors.fullname.message}</p>
             )}
 
+            {/* Email */}
+            <Label>Email</Label>
+            <Input
+              type="email"
+              placeholder="Enter applicant’s email"
+              {...register("email")}
+            />
+            {errors.email && (
+              <p className="text-sm text-red-500">{errors.email.message}</p>
+            )}
+
+            {/* Employment type */}
             <Label>Employment Type</Label>
             <Select
               onValueChange={(v) =>
-                setValue("type", v as "part-time" | "full-time")
+                setValue("type", v as "working-student" | "full-time")
               }
               value={watch("type")}
             >
@@ -98,7 +113,9 @@ export default function AddApplicant() {
               </SelectTrigger>
               <SelectContent>
                 <SelectGroup>
-                  <SelectItem value="part-time">Part Time</SelectItem>
+                  <SelectItem value="working-student">
+                    Working Student
+                  </SelectItem>
                   <SelectItem value="full-time">Full Time</SelectItem>
                 </SelectGroup>
               </SelectContent>

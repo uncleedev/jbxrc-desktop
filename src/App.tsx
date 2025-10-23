@@ -12,6 +12,7 @@ import { useAuthStore } from "../stores/useAuthStore";
 import { useEffect, useState } from "react";
 import SigninPage from "./pages/auth/Signin";
 import SettingPage from "./pages/admin/settings/Setting";
+import ProductPage from "./pages/admin/products/Product";
 
 function ProtectedRoute({ children }: { children: JSX.Element }) {
   const { session, getSession, loading } = useAuthStore();
@@ -52,6 +53,7 @@ export default function App() {
           <Route path="/dashboard" element={<DashboardPage />} />
           <Route path="/applicants" element={<ApplicantPage />} />
           <Route path="/employees" element={<EmployeePage />} />
+          <Route path="/products" element={<ProductPage />} />
           <Route path="/settings" element={<SettingPage />} />
         </Route>
       </Routes>

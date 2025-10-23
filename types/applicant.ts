@@ -1,4 +1,5 @@
 export type ApplicantStatus =
+  | "no-status"
   | "examination"
   | "interview"
   | "requirements"
@@ -7,11 +8,12 @@ export type ApplicantStatus =
   | "cancelled"
   | "deployed";
 
-export type EmploymentType = "part-time" | "full-time";
+export type EmploymentType = "working-student" | "full-time";
 
 export type Applicant = {
   id: string;
   fullname: string;
+  email: string;
   type: EmploymentType;
   status: ApplicantStatus;
   created_at: string;
