@@ -24,7 +24,7 @@ export default function SigninPage() {
   const { register, handleSubmit } = useForm<SigninForm>({
     resolver: zodResolver(signinSchema),
     defaultValues: {
-      email: "partnercommunity01@gmail.com",
+      email: "arce.jhonbrian.dev@gmail.com",
     },
   });
 
@@ -53,9 +53,17 @@ export default function SigninPage() {
         onSubmit={handleSubmit(onSubmit)}
         className="flex flex-col gap-4 p-6 bg-white rounded-md shadow-md w-96"
       >
-        <h2 className="text-2xl font-semibold text-center">
+        <h2 className="text-2xl font-semibold text-center text-[#ec0028]">
           File Status Monitoring System
         </h2>
+
+        {/* Email Input */}
+        <Input
+          type="email"
+          placeholder="Email"
+          {...register("email")}
+          className="mt-2"
+        />
 
         {/* Password Input with Eye */}
         <div className="relative">
@@ -73,7 +81,22 @@ export default function SigninPage() {
           </button>
         </div>
 
-        <Button type="submit" disabled={loading}>
+        {/* Forgot Password Link */}
+        <div className="text-right">
+          <button
+            type="button"
+            onClick={() => navigate("/forgot-password")}
+            className="text-sm text-[#ec0028] hover:underline"
+          >
+            Forgot Password?
+          </button>
+        </div>
+
+        <Button
+          type="submit"
+          disabled={loading}
+          className="bg-[#ec0028] hover:bg-[#c50020]"
+        >
           {loading ? "Signing in..." : "Sign In"}
         </Button>
       </form>

@@ -1,6 +1,6 @@
 import { create } from "zustand";
 import { Session, User } from "@supabase/supabase-js";
-import { authService } from "../services/auth-service";
+import { supabase } from "@/lib/supabase";
 import { toast } from "sonner";
 
 interface AuthState {
@@ -23,8 +23,12 @@ export const useAuthStore = create<AuthState>((set) => ({
   signin: async (email, password) => {
     set({ loading: true, error: null });
     try {
-      const session = await authService.signin(email, password);
-      set({ user: session?.user ?? null, session: session ?? null });
+      const { data, error } = await supabase.auth.signInWithPassword({
+        email,
+        password,
+      });
+      if (error) throw error;
+      set({ user: data.user ?? null, session: data.session ?? null });
       toast.success("Signed in successfully!");
     } catch (err: any) {
       set({ error: err.message || "Failed to sign in" });
@@ -37,7 +41,7 @@ export const useAuthStore = create<AuthState>((set) => ({
   signOut: async () => {
     set({ loading: true, error: null });
     try {
-      await authService.signOut();
+      await supabase.auth.signOut();
       set({ user: null, session: null });
       toast.success("Signed out successfully!");
     } catch (err: any) {
@@ -51,8 +55,12 @@ export const useAuthStore = create<AuthState>((set) => ({
   getSession: async () => {
     set({ loading: true, error: null });
     try {
-      const session = await authService.getSession();
-      set({ user: session?.user ?? null, session: session ?? null });
+      const { data, error } = await supabase.auth.getSession();
+      if (error) throw error;
+      set({
+        user: data.session?.user ?? null,
+        session: data.session ?? null,
+      });
     } catch (err: any) {
       set({ error: err.message || "Failed to get session" });
       toast.error(err.message || "Failed to get session");
@@ -64,10 +72,12 @@ export const useAuthStore = create<AuthState>((set) => ({
   updatePassword: async (newPassword) => {
     set({ loading: true, error: null });
     try {
-      await authService.updatePassword(newPassword);
-      // Refresh session after password update
-      const session = await authService.getSession();
-      set({ user: session?.user ?? null, session: session ?? null });
+      const { error } = await supabase.auth.updateUser({
+        password: newPassword,
+      });
+      if (error) throw error;
+      const { data } = await supabase.auth.getSession();
+      set({ user: data.session?.user ?? null, session: data.session ?? null });
       toast.success("Password updated successfully!");
     } catch (err: any) {
       set({ error: err.message || "Failed to update password" });
@@ -77,3 +87,22 @@ export const useAuthStore = create<AuthState>((set) => ({
     }
   },
 }));
+
+// ✅ Add session listener
+supabase.auth.onAuthStateChange((event, session) => {
+  useAuthStore.getState();
+
+  if (["SIGNED_IN", "TOKEN_REFRESHED", "USER_UPDATED"].includes(event)) {
+    useAuthStore.setState({
+      session,
+      user: session?.user ?? null,
+    });
+  }
+
+  if (event === "SIGNED_OUT") {
+    useAuthStore.setState({
+      session: null,
+      user: null,
+    });
+  }
+});

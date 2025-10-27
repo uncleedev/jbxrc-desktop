@@ -3,16 +3,19 @@ import {
   Routes,
   Route,
   Navigate,
+  useLocation,
 } from "react-router-dom";
+import { useAuthStore } from "../stores/useAuthStore";
+import { useEffect, useState } from "react";
+
 import LayoutAdmin from "./pages/admin/LayoutAdmin";
 import DashboardPage from "./pages/admin/Dashboard";
 import EmployeePage from "./pages/admin/employees/Employee";
 import ApplicantPage from "./pages/admin/applicants/Applicant";
-import { useAuthStore } from "../stores/useAuthStore";
-import { useEffect, useState } from "react";
-import SigninPage from "./pages/auth/Signin";
-import SettingPage from "./pages/admin/settings/Setting";
 import ProductPage from "./pages/admin/products/Product";
+import SettingPage from "./pages/admin/settings/Setting";
+import SigninPage from "./pages/auth/Signin";
+import ForgotPasswordPage from "./pages/auth/ForgotPassword";
 
 function ProtectedRoute({ children }: { children: JSX.Element }) {
   const { session, getSession, loading } = useAuthStore();
@@ -24,7 +27,7 @@ function ProtectedRoute({ children }: { children: JSX.Element }) {
       setInitialized(true);
     };
     init();
-  }, [getSession]);
+  }, []);
 
   if (!initialized || loading) {
     return <div className="text-center py-10">Loading...</div>;
@@ -37,11 +40,36 @@ function ProtectedRoute({ children }: { children: JSX.Element }) {
   return children;
 }
 
+function RedirectIfAuthenticated({ children }: { children: JSX.Element }) {
+  const { session } = useAuthStore();
+  const location = useLocation();
+
+  if (session && ["/", "/forgot-password"].includes(location.pathname)) {
+    return <Navigate to="/dashboard" replace />;
+  }
+
+  return children;
+}
+
 export default function App() {
+  const getSession = useAuthStore((state) => state.getSession);
+
+  useEffect(() => {
+    getSession();
+  }, [getSession]);
+
   return (
     <Router>
       <Routes>
-        <Route index element={<SigninPage />} />
+        <Route
+          index
+          element={
+            <RedirectIfAuthenticated>
+              <SigninPage />
+            </RedirectIfAuthenticated>
+          }
+        />
+        <Route path="/forgot-password" element={<ForgotPasswordPage />} />
 
         <Route
           element={
