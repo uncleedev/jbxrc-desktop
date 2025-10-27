@@ -30,6 +30,9 @@ type ApplicantState = {
 };
 
 let unsubscribeFn: (() => void) | null = null;
+const serviceId = import.meta.env.VITE_EMAILJS_SERVICE_ID as string
+const templateId = import.meta.env.VITE_EMAILJS_TEMPLATE_ID as string
+const publicKey= import.meta.env.VITE_EMAILJS_PUBLIC_KEY as string
 
 export const useApplicantStore = create<ApplicantState>((set, get) => ({
   applicants: [],
@@ -151,10 +154,10 @@ export const useApplicantStore = create<ApplicantState>((set, get) => ({
       };
 
       await emailjs.send(
-        import.meta.env.VITE_EMAILJS_SERVICE_ID as string,
-        import.meta.env.VITE_EMAILJS_TEMPLATE_ID as string,
+        serviceId,
+        templateId,
         templateParams,
-        import.meta.env.VITE_EMAILJS_PUBLIC_KEY as string
+        publicKey
       );
 
       await updateApplicant({ id, status: "deployed", note });

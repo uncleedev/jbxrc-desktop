@@ -1,7 +1,11 @@
 {
   "name": "jbxrc-desktop",
+  "author": {
+    "name": "uncledev"
+  },
+  "description": "jbxrc",
   "private": true,
-  "version": "0.0.0",
+  "version": "0.1.2",
   "type": "module",
   "scripts": {
     "dev": "vite",
