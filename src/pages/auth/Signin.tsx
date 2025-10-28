@@ -24,7 +24,7 @@ export default function SigninPage() {
   const { register, handleSubmit } = useForm<SigninForm>({
     resolver: zodResolver(signinSchema),
     defaultValues: {
-      email: "arce.jhonbrian.dev@gmail.com",
+      email: "partnercommunity01@gmail.com",
     },
   });
 
