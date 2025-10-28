@@ -26,4 +26,4 @@ release
 *.sln
 *.sw?
 
-.env
+!.env.example
