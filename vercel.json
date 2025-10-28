@@ -1,3 +1,24 @@
 {
-  "rewrites": [{ "source": "/(.*)", "destination": "/" }]
+  "rewrites": [
+    {
+      "source": "/registerSW.js",
+      "destination": "/registerSW.js"
+    },
+    {
+      "source": "/site.webmanifest",
+      "destination": "/site.webmanifest"
+    },
+    {
+      "source": "/web-app-manifest-192x192.png",
+      "destination": "/web-app-manifest-192x192.png"
+    },
+    {
+      "source": "/web-app-manifest-512x512.png",
+      "destination": "/web-app-manifest-512x512.png"
+    },
+    {
+      "source": "/(.*)",
+      "destination": "/"
+    }
+  ]
 }
