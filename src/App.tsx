@@ -1,10 +1,4 @@
-import {
-  HashRouter as Router,
-  Routes,
-  Route,
-  Navigate,
-  useLocation,
-} from "react-router-dom";
+import { Routes, Route, Navigate, useLocation } from "react-router-dom";
 import { useAuthStore } from "../stores/useAuthStore";
 import { useEffect, useState } from "react";
 
@@ -16,6 +10,9 @@ import ProductPage from "./pages/admin/products/Product";
 import SettingPage from "./pages/admin/settings/Setting";
 import SigninPage from "./pages/auth/Signin";
 import ForgotPasswordPage from "./pages/auth/ForgotPassword";
+import HomePage from "./pages/home/Home";
+import { isElectron } from "@/lib/platform";
+import { AppRouter } from "./routes/app-router";
 
 function ProtectedRoute({ children }: { children: JSX.Element }) {
   const { session, getSession, loading } = useAuthStore();
@@ -59,10 +56,18 @@ export default function App() {
   }, [getSession]);
 
   return (
-    <Router>
+    <AppRouter>
       <Routes>
         <Route
           index
+          element={
+            isElectron() ? <Navigate to="/auth/signin" replace /> : <HomePage />
+          }
+        />
+
+        {/* Auth Routes */}
+        <Route
+          path="/auth/signin"
           element={
             <RedirectIfAuthenticated>
               <SigninPage />
@@ -71,6 +76,7 @@ export default function App() {
         />
         <Route path="/forgot-password" element={<ForgotPasswordPage />} />
 
+        {/* Protected Admin Routes */}
         <Route
           element={
             <ProtectedRoute>
@@ -85,6 +91,6 @@ export default function App() {
           <Route path="/settings" element={<SettingPage />} />
         </Route>
       </Routes>
-    </Router>
+    </AppRouter>
   );
 }

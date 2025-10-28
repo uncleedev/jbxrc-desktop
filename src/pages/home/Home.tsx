@@ -54,24 +54,27 @@ export default function HomePage() {
         desc="The face of Jollibee! Our Counter Team delivers warm welcomes, friendly service, and joyful smiles with every order. Be the reason why every customer's day gets brighter."
         images={[img1, img3, img2]}
       />
-      <Section
-        title="DELIGHTFUL MOMENTS AS DINING TEAM!"
-        desc="Keeping the heart of Jollibee vibrant, the Dining Team ensures guests enjoy a clean, fun, and family-friendly experience. Here, every table served is a moment of joy created."
-        images={[img4, img5]}
-        red
-      />
-      <Gallery images={[img6, img7, img8, img9, img10]} />
-      <Section
-        title="FUN EXPERIENCE AS KITCHEN TEAM!"
-        desc="Behind every world-famous Chickenjoy is a passionate Kitchen Team. With skill, teamwork, and dedication, they bring delicious meals to life—turning simple ingredients into fun moments."
-        images={[img11, img12]}
-        red
-      />
-      <Section
-        title="ROLLING THE JOY AS DRIVE-THRU TEAM!"
-        desc="Fast, fun, and full of energy! The Drive-Thru Team keeps the joy rolling! Making every order on-the-go feel just as special as dining in."
-        images={[img13, img14]}
-      />
+
+      <div className="flex flex-col gap-4">
+        <Section
+          title="DELIGHTFUL MOMENTS AS DINING TEAM!"
+          desc="Keeping the heart of Jollibee vibrant, the Dining Team ensures guests enjoy a clean, fun, and family-friendly experience. Here, every table served is a moment of joy created."
+          images={[img4, img5]}
+          red
+        />
+        <Gallery images={[img6, img7, img8, img9, img10]} />
+        <Section
+          title="FUN EXPERIENCE AS KITCHEN TEAM!"
+          desc="Behind every world-famous Chickenjoy is a passionate Kitchen Team. With skill, teamwork, and dedication, they bring delicious meals to life—turning simple ingredients into fun moments."
+          images={[img11, img12]}
+          red
+        />
+        <Section
+          title="ROLLING THE JOY AS DRIVE-THRU TEAM!"
+          desc="Fast, fun, and full of energy! The Drive-Thru Team keeps the joy rolling! Making every order on-the-go feel just as special as dining in."
+          images={[img13, img14]}
+        />
+      </div>
       <Footer />
     </div>
   );
@@ -192,17 +195,30 @@ function Section({ title, desc, images, red = false }: SectionProps) {
 function Gallery({ images }: { images: string[] }) {
   return (
     <div
-      className="bg-[#EA0038] py-10 px-6 flex flex-wrap justify-center gap-4 rounded-xl"
+      className="bg-[#EA0038] py-10 px-6 flex flex-wrap justify-center gap-8 rounded-xl relative"
       style={{ backgroundImage: drumPattern }}
     >
-      {images.map((src, i) => (
-        <div
-          key={i}
-          className="border-4 border-white rounded-md overflow-hidden w-40 sm:w-48 md:w-56"
-        >
-          <img src={src} alt="Gallery" className="w-full h-full object-cover" />
-        </div>
-      ))}
+      {images.map((src, i) => {
+        // Set different rotation for each image
+        const rotations = ["-9deg", "-6deg", "0deg", "6deg", "9deg"];
+        const rotate = rotations[i % rotations.length];
+        return (
+          <div
+            key={i}
+            className="border-4 border-white rounded-md overflow-hidden w-40 sm:w-48 md:w-56 shadow-lg"
+            style={{
+              transform: `rotate(${rotate})`,
+              transition: "transform 0.3s",
+            }}
+          >
+            <img
+              src={src}
+              alt="Gallery"
+              className="w-full h-full object-cover"
+            />
+          </div>
+        );
+      })}
     </div>
   );
 }
