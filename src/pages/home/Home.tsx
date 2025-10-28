@@ -102,11 +102,11 @@ function Hero() {
         <div className="inline-block bg-[#EA0038] text-white px-8 py-3 rounded-full lg:rounded-r-full text-2xl font-extrabold mb-4">
           WELCOME TO
         </div>
-        <div className="flex justify-center md:justify-end">
+        <div className="flex justify-center md:justify-start">
           <img
             src={logoTitle}
             alt="Jollibee Logo"
-            className="w-64 sm:w-80 md:w-96"
+            className="w-64 sm:w-80 md:w-80"
           />
         </div>
         <p className="mt-6 text-lg sm:text-xl md:text-2xl leading-relaxed text-center md:text-left">
