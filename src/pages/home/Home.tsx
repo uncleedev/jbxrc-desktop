@@ -172,7 +172,7 @@ function Section({ title, desc, images, red = false }: SectionProps) {
         {images.map((src, i) => (
           <div
             key={i}
-            className="border-4 border-white shadow-lg rounded-md overflow-hidden w-48 sm:w-56 md:w-60"
+            className=" shadow-lg rounded-md overflow-hidden w-48 sm:w-56 md:w-60"
           >
             <img src={src} alt="Team" className="w-full h-full object-cover" />
           </div>
@@ -199,15 +199,18 @@ function Gallery({ images }: { images: string[] }) {
       style={{ backgroundImage: drumPattern }}
     >
       {images.map((src, i) => {
-        // Set different rotation for each image
-        const rotations = ["-9deg", "-6deg", "0deg", "6deg", "9deg"];
-        const rotate = rotations[i % rotations.length];
+        // Custom rotations and translations to mimic screenshot
+        const rotate = ["-10deg", "-5deg", "0deg", "5deg", "10deg"][i % 5];
+        const translateY = [-10, -5, 0, 5, 10][i % 5]; // vertical shift
+        const zIndex = 5 - (i % 5); // overlapping order
+
         return (
           <div
             key={i}
             className="border-4 border-white rounded-md overflow-hidden w-40 sm:w-48 md:w-56 shadow-lg"
             style={{
-              transform: `rotate(${rotate})`,
+              transform: `rotate(${rotate}) translateY(${translateY}px)`,
+              zIndex,
               transition: "transform 0.3s",
             }}
           >

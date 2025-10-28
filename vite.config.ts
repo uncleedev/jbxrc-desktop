@@ -9,8 +9,8 @@ const isElectron = process.env.ELECTRON === "true";
 
 // https://vitejs.dev/config/
 export default defineConfig({
-  base: "./",
-  publicDir: "public", // ensures icons and manifest are copied into dist
+  base: "/",
+  publicDir: "public",
 
   plugins: [
     react(),
@@ -27,7 +27,7 @@ export default defineConfig({
       renderer: process.env.NODE_ENV === "test" ? undefined : {},
     }),
 
-     VitePWA({
+    VitePWA({
       registerType: "autoUpdate",
       includeAssets: [
         "favicon.svg",
