@@ -1,4 +1,4 @@
-import logo from "@/assets/img/Logo.png";
+import logo from "@/assets/logo2.png";
 import logoTitle from "@/assets/img/logo-title.png";
 import jabeCopy from "@/assets/img/jabe copy.png";
 import jabiii from "@/assets/img/jabiii.png";
@@ -82,12 +82,14 @@ export default function HomePage() {
 
 function TopBar() {
   return (
-    <div className="bg-[#EA0038] text-white px-6 sm:px-12 py-3 flex justify-between items-center">
-      <div className="flex items-center gap-3">
-        <img src={logo} alt="logo" className="h-24 sm:h-36" />
-      </div>
-      <div className="text-xl sm:text-2xl font-semibold">
-        Thanks for Visiting!
+    <div className="bg-[#EA0038]  ">
+      <div className="max-w-[1200px] mx-auto text-white px-6 sm:px-12 py-3 flex justify-between items-center">
+        <div className="flex items-center gap-3">
+          <img src={logo} alt="logo" className="h-12 sm:h-16 " />
+        </div>
+        <div className="text-xl sm:text-2xl font-semibold">
+          Thanks for Visiting!
+        </div>
       </div>
     </div>
   );
@@ -97,7 +99,7 @@ function Hero() {
   return (
     <section className="flex flex-col md:flex-row items-center gap-8 md:gap-12 max-w-[1200px] mx-auto py-12 px-6">
       <div className="flex-1 min-w-[300px] text-center md:text-left">
-        <div className="inline-block bg-[#EA0038] text-white px-8 py-3 rounded-r-full text-2xl font-extrabold mb-4">
+        <div className="inline-block bg-[#EA0038] text-white px-8 py-3 rounded-full lg:rounded-r-full text-2xl font-extrabold mb-4">
           WELCOME TO
         </div>
         <div className="flex justify-center md:justify-end">
