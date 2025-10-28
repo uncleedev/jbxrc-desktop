@@ -1,5 +1,5 @@
 import logo from "@/assets/logo2.png";
-import logoTitle from "@/assets/img/logo-title.png";
+import logoTitle from "@/assets/logo3.png";
 import jabeCopy from "@/assets/img/jabe copy.png";
 import jabiii from "@/assets/img/jabiii.png";
 
