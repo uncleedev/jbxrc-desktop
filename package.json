@@ -3,16 +3,23 @@
   "author": {
     "name": "uncledev"
   },
-  "description": "jbxrc",
+  "description": "JBXRC FILE STATUS MONITORING SYSTEM",
   "private": true,
   "version": "0.1.2",
   "type": "module",
+  "main": "dist-electron/main.js",
+
   "scripts": {
     "dev": "vite",
+    "dev:electron": "cross-env ELECTRON=true vite",
     "build": "tsc && vite build && electron-builder",
+    "build:electron": "cross-env ELECTRON=true tsc && vite build && electron-builder",
+    "build:pwa": "vite build",
+    "preview": "vite preview",
     "lint": "eslint . --ext ts,tsx --report-unused-disable-directives --max-warnings 0",
-    "preview": "vite preview"
+    "serve:pwa": "npx serve dist"
   },
+
   "dependencies": {
     "@hookform/resolvers": "^5.2.2",
     "@radix-ui/react-checkbox": "^1.3.3",
@@ -40,12 +47,14 @@
     "zod": "^4.1.12",
     "zustand": "^5.0.8"
   },
+
   "devDependencies": {
     "@types/react": "^18.2.64",
     "@types/react-dom": "^18.2.21",
     "@typescript-eslint/eslint-plugin": "^7.1.1",
     "@typescript-eslint/parser": "^7.1.1",
     "@vitejs/plugin-react": "^4.2.1",
+    "cross-env": "^7.0.3",
     "electron": "^30.0.1",
     "electron-builder": "^24.13.3",
     "eslint": "^8.57.0",
@@ -55,7 +64,7 @@
     "typescript": "^5.2.2",
     "vite": "^5.1.6",
     "vite-plugin-electron": "^0.28.6",
-    "vite-plugin-electron-renderer": "^0.14.5"
-  },
-  "main": "dist-electron/main.js"
+    "vite-plugin-electron-renderer": "^0.14.5",
+    "vite-plugin-pwa": "^1.1.0"
+  }
 }
