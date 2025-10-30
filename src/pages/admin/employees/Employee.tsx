@@ -45,7 +45,7 @@ export default function EmployeePage() {
   } = useEmployeeStationStore();
 
   const [typeFilter, setTypeFilter] = useState<
-    "all" | "part-time" | "full-time"
+    "all" | "working-student" | "full-time"
   >("all");
   const [stationFilter, setStationFilter] = useState<StationFilter>("all");
   const [searchTerm, setSearchTerm] = useState("");
@@ -147,7 +147,7 @@ export default function EmployeePage() {
           <Select
             value={typeFilter}
             onValueChange={(val) =>
-              setTypeFilter(val as "all" | "part-time" | "full-time")
+              setTypeFilter(val as "all" | "working-student" | "full-time")
             }
           >
             <SelectTrigger className="w-full">
@@ -156,7 +156,7 @@ export default function EmployeePage() {
             <SelectContent>
               <SelectGroup>
                 <SelectItem value="all">All Type</SelectItem>
-                <SelectItem value="part-time">Part Time</SelectItem>
+                <SelectItem value="working-student">Working Student</SelectItem>
                 <SelectItem value="full-time">Full Time</SelectItem>
               </SelectGroup>
             </SelectContent>
